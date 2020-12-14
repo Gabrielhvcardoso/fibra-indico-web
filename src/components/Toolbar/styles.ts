@@ -3,28 +3,39 @@ import styled from 'styled-components';
 export const Container = styled.aside`
   align-items: center;
   background-color: white;
-  box-shadow: 0px 0px 20px #00000033;
   display: flex;
   flex-direction: column;
   height: 100vh;
   justify-content: center;
-  left: 0px;
-  position: absolute;
   transition: .6s;
-  top: 0px;
   width: 60px;
-
-  transform: translateX(-50px);
-
-  &:hover {
-    transform: translateX(0px);
-  }
 `;
 
 export const IconButton = styled.div`
+  color: black;
   height: 60px;
   width: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
+  text-decoration: none;
+`;
+
+export const Nav = styled.nav`
+  display: flex;
+  flex-direction: column;
+`;
+
+interface IndicatorProps {
+  position?: number;
+}
+
+export const Indicator = styled.div<IndicatorProps>`
+  background-color: #2b7ed7;
+  height: 60px;
+  position: absolute;
+  width: 5px;
+  transition: .6s;
+
+  transform: translateY(${props => props.position ?? 0}px);
 `;

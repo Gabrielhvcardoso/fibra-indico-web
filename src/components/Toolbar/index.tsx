@@ -1,24 +1,45 @@
-import React from 'react';
-import { Container, IconButton } from './styles';
-
+import React, { useMemo } from 'react';
+import { withRouter, Link, RouteComponentProps } from 'react-router-dom';
 import { Diagram3, Grid, People } from 'react-bootstrap-icons';
 
-const Toolbar: React.FC = () => {
+import { Container, IconButton, Indicator, Nav } from './styles';
+
+const Toolbar: React.FC<RouteComponentProps> = ({ location }) => {
+  const position = useMemo(() => {
+    switch (location?.pathname) {
+      case '/relationships':
+        return 60;
+      case '/users':
+        return 120;
+      default:
+        return 0;
+    }
+  }, [location?.pathname]);
+
   return (
     <Container>
-      <IconButton>
-        <Grid size={25} />
-      </IconButton>
+      <Nav>
+        <Indicator position={position} />
+        <Link to="/">
+          <IconButton>
+            <Grid size={25} />
+          </IconButton>
+        </Link>
 
-      <IconButton>
-        <Diagram3 size={25} />
-      </IconButton>
+        <Link to="/relationships">
+          <IconButton>
+            <Diagram3 size={25} />
+          </IconButton>
+        </Link>
 
-      <IconButton>
-        <People size={25} />
-      </IconButton>
+        <Link to="/users">
+          <IconButton>
+            <People size={25} />
+          </IconButton>
+        </Link>
+      </Nav>
     </Container>
   );
 };
 
-export default Toolbar;
+export default withRouter(Toolbar);

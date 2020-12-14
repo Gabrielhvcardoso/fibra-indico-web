@@ -1,9 +1,12 @@
 import React from 'react';
-
-// import { Container } from './styles';
+import { Container } from './styles';
 
 const Users: React.FC = () => {
-  return <div>asdjjsad</div>;
+  return (
+    <Container>
+      <h1>Gerenciar Usuários</h1>
+    </Container>
+  );
 };
 
 export default Users;
