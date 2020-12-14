@@ -7,8 +7,15 @@ export const Container = styled.aside`
   flex-direction: column;
   height: 100vh;
   justify-content: center;
-  transition: .6s;
   width: 60px;
+
+  @media (max-width: 768px) {
+    position: absolute;
+    height: 60px;
+    width: 100vw;
+    flex-direction: row;
+    bottom: 0px;
+  }
 `;
 
 export const IconButton = styled.div`
@@ -19,11 +26,19 @@ export const IconButton = styled.div`
   align-items: center;
   justify-content: center;
   text-decoration: none;
+  
+  @media (max-width: 768px) {
+    width: 90px;
+  }
 `;
 
 export const Nav = styled.nav`
   display: flex;
   flex-direction: column;
+  
+  @media (max-width: 768px) {
+    flex-direction: row;
+  }
 `;
 
 interface IndicatorProps {
@@ -35,7 +50,13 @@ export const Indicator = styled.div<IndicatorProps>`
   height: 60px;
   position: absolute;
   width: 5px;
-  transition: .6s;
+  transition: .6s transform;
 
-  transform: translateY(${props => props.position ?? 0}px);
+  transform: translateY(${props => (props.position ?? 0) * 60}px);
+
+  @media (max-width: 768px) {
+    transform: translateX(${props => (props.position ?? 0) * 90}px);
+    width: 90px;
+    height: 5px;
+  }
 `;
