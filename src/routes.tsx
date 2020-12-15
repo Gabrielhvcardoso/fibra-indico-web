@@ -5,7 +5,7 @@ import Toolbar from './components/Toolbar';
 
 import Panel from './pages/Panel';
 import Users from './pages/Users';
-import Relationships from './pages/Relationships';
+import Products from './pages/Products';
 
 const Routes: React.FC = () => {
   return (
@@ -15,7 +15,7 @@ const Routes: React.FC = () => {
       <Switch>
         <Route path="/" exact component={Panel} />
         <Route path="/users" component={Users} />
-        <Route path="/relationships" component={Relationships} />
+        <Route path="/products" component={Products} />
       </Switch>
     </BrowserRouter>
   );

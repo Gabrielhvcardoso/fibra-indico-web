@@ -10,7 +10,7 @@ const Toolbar: React.FC<RouteComponentProps> = ({ location }) => {
         {
           [
             { to: '/', label: 'Painel de controle' },
-            { to: '/relationships', label: 'Relacionamentos' },
+            { to: '/products', label: 'Produtos' },
             { to: '/users', label: 'Usuários' }
           ].map(({ to, label }) => (
             <NavLink key={to} selected={location.pathname === to} to={to}>{ label }</NavLink>
