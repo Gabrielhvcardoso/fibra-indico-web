@@ -1,13 +1,15 @@
 import styled from 'styled-components';
+import { NavLink as RouterNavLink, NavLinkProps as RouterNavLinkProps } from 'react-router-dom';
 
 export const Container = styled.aside`
   align-items: center;
   background-color: white;
+  box-sizing: border-box;
   display: flex;
-  flex-direction: column;
-  height: 100vh;
-  justify-content: center;
-  width: 60px;
+  height: 60px;
+  justify-content: flex-end;
+  padding: 0px 30px;
+  width: 100vw;
 
   @media (max-width: 768px) {
     position: absolute;
@@ -18,45 +20,17 @@ export const Container = styled.aside`
   }
 `;
 
-export const IconButton = styled.div`
-  color: black;
-  height: 60px;
-  width: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  
-  @media (max-width: 768px) {
-    width: 90px;
-  }
-`;
-
 export const Nav = styled.nav`
   display: flex;
-  flex-direction: column;
-  
-  @media (max-width: 768px) {
-    flex-direction: row;
-  }
+  position: relative;
 `;
 
-interface IndicatorProps {
-  position?: number;
+interface NavLinkProps extends RouterNavLinkProps {
+  selected?: boolean;
 }
 
-export const Indicator = styled.div<IndicatorProps>`
-  background-color: #2b7ed7;
-  height: 60px;
-  position: absolute;
-  width: 5px;
-  transition: .6s transform;
-
-  transform: translateY(${props => (props.position ?? 0) * 60}px);
-
-  @media (max-width: 768px) {
-    transform: translateX(${props => (props.position ?? 0) * 90}px);
-    width: 90px;
-    height: 5px;
-  }
+export const NavLink = styled(RouterNavLink)<NavLinkProps>`
+  color: ${props => props.selected ? '#2b7ed7' : 'grey'};
+  margin: 0px 15px;
+  text-decoration: none;
 `;
