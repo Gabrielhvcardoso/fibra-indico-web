@@ -1,8 +1,10 @@
+import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
-export const Container = styled.div`
+export const Container = styled(motion.div)`
   background-color: white;
   border-radius: 10px;
+  cursor: pointer;
   display: flex;
   flex-direction: column;
   margin: 5px 0px 10px;

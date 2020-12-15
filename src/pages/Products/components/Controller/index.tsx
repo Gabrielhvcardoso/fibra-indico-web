@@ -1,20 +1,30 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Container } from './styles';
 
+import { AnimateSharedLayout } from 'framer-motion';
+
+import DataContext from '../../../../context/data';
+import { HierarchyListContextProvider } from './context';
+
 import HierarchyItem from './components/HierarchyItem';
+import HierarchyModal from './components/HierarchyModal';
 
 const Controller: React.FC = () => {
+  const { hierarchies } = useContext(DataContext);
+
   return (
     <Container>
-      <HierarchyItem />
-      <HierarchyItem />
-      <HierarchyItem />
-      <HierarchyItem />
-      <HierarchyItem />
-      <HierarchyItem />
-      <HierarchyItem />
-      <HierarchyItem />
-      <HierarchyItem />
+      <HierarchyListContextProvider>
+        <AnimateSharedLayout>
+          <HierarchyModal />
+
+          {
+            hierarchies.map((item) => (
+              <HierarchyItem item={item} key={item.hierarchyId} />
+            ))
+          }
+        </AnimateSharedLayout>
+      </HierarchyListContextProvider>
     </Container>
   );
 };
