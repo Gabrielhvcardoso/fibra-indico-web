@@ -6,7 +6,7 @@ export const Container = styled.aside`
   background-color: white;
   box-sizing: border-box;
   display: flex;
-  height: 60px;
+  min-height: 10vh;
   justify-content: flex-end;
   padding: 0px 30px;
   width: 100vw;
