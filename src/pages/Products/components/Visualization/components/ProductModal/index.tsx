@@ -50,7 +50,16 @@ const ProductModal: React.FC = () => {
                 placeholder="Valor da comissão"
                 value={currencyFormat(current.commission, true)}
               />
-              <Button>{ current.productId ? 'Salvar alterações' : 'Salvar produto' }</Button>
+              {
+                current.productId
+                  ? (
+                      <div style={{ display: 'flex' }}>
+                        <Button style={{ flex: 1, marginRight: 5 }}>Excluir</Button>
+                        <Button style={{ flex: 1, marginLeft: 5 }}>Salvar alterações</Button>
+                      </div>
+                    )
+                  : <Button>Salvar produto</Button>
+              }
             </Container>
           </Backdrop>
         )
