@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
-import { Container } from './styles';
+import { Button, Container } from './styles';
 
 import { AnimateSharedLayout } from 'framer-motion';
 
 import DataContext from '../../../../context/data';
-import { HierarchyListContextProvider } from './context';
+import HierarchyListContext, { HierarchyListContextProvider } from './context';
 
 import HierarchyItem from './components/HierarchyItem';
 import HierarchyModal from './components/HierarchyModal';
@@ -17,6 +17,12 @@ const Controller: React.FC = () => {
       <HierarchyListContextProvider>
         <AnimateSharedLayout>
           <HierarchyModal />
+
+          <HierarchyListContext.Consumer>
+            {
+              ({ setIsCreating }) => <Button onClick={() => setIsCreating(true)}>Novo índice</Button>
+            }
+          </HierarchyListContext.Consumer>
 
           {
             hierarchies.map((item) => (
