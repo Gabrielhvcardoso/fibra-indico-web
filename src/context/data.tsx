@@ -26,7 +26,15 @@ export const DataContextProvider: React.FC = ({ children }) => {
       const tempProducts = [
         { productId: 1, title: 'Instalação Internet Fibra', commission: 100 },
         { productId: 2, title: 'Televisão Fibra 42 pol', commission: 150 },
-        { productId: 3, title: 'Pacote Anual de Internet Fibra', commission: 200 }
+        { productId: 3, title: 'Pacote Anual de Internet Fibra', commission: 200 },
+        { productId: 4, title: 'Pacote Anual de Internet Fibra', commission: 200 },
+        { productId: 5, title: 'Pacote Anual de Internet Fibra', commission: 200 },
+        { productId: 6, title: 'Pacote Anual de Internet Fibra', commission: 200 },
+        { productId: 7, title: 'Pacote Anual de Internet Fibra', commission: 200 },
+        { productId: 8, title: 'Pacote Anual de Internet Fibra', commission: 200 },
+        { productId: 9, title: 'Pacote Anual de Internet Fibra', commission: 200 },
+        { productId: 10, title: 'Pacote Anual de Internet Fibra', commission: 200 },
+        { productId: 11, title: 'Pacote Anual de Internet Fibra', commission: 200 }
       ];
 
       setHierarchies(tempHierarchies);
