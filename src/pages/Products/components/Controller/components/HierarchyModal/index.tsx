@@ -53,7 +53,7 @@ const HierarchyModal: React.FC = () => {
               <div style={{ height: 0, display: 'flex', justifyContent: 'flex-end' }}>
                 <AnimatePresence>
                   {
-                    (current.porcentage && !(current.porcentage < 0 || current.porcentage > 100)) && (
+                    (!(current.porcentage === selected?.porcentage) && current.porcentage && !(current.porcentage < 0 || current.porcentage > 100)) && (
                       <ConffirmButton>
                         <ArrowRight size={24} color={'black'} />
                       </ConffirmButton>
