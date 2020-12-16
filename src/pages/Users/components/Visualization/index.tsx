@@ -2,6 +2,8 @@ import React, { createRef } from 'react';
 import Tree from 'react-tree-graph';
 import { Container } from './styles';
 
+import Options from './components/Options';
+
 import { useDimensions } from '../../../../hooks';
 
 import 'react-tree-graph/dist/style.css';
@@ -46,6 +48,7 @@ const Visualization: React.FC = () => {
 
   return (
     <Container ref={containerRef} >
+      <Options />
       <Tree
         data={data}
         nodeRadius={15}

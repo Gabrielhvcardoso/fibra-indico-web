@@ -9,4 +9,5 @@ export const Container = styled.div`
   justify-content: center;
   max-height: 90vh;
   padding: 30px;
+  position: relative;
 `;
