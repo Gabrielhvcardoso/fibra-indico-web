@@ -4,12 +4,16 @@ import { Container } from './styles';
 import List from './components/List';
 import Visualization from './components/Visualization';
 
+import { UsersContextProvider } from './context';
+
 const Users: React.FC = () => {
   return (
-    <Container>
-      <List />
-      <Visualization />
-    </Container>
+    <UsersContextProvider>
+      <Container>
+        <List />
+        <Visualization />
+      </Container>
+    </UsersContextProvider>
   );
 };
 

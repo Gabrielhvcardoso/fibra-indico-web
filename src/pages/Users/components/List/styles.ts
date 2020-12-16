@@ -11,14 +11,19 @@ export const Container = styled.div`
   width: 20vw;
 `;
 
-export const ListItem = styled.div`
+interface ListItemProps {
+  selected?: boolean
+}
+
+export const ListItem = styled.div<ListItemProps>`
   cursor: pointer;
+  background-color: ${props => props.selected ? '#00000011' : '#00000000'};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   padding: 15px 25px;
 
   &:hover {
-    background-color: #00000011;
+    background-color: ${props => props.selected ? '#00000022' : '#00000011'};
   }
 `;
