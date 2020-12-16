@@ -29,7 +29,7 @@ const HierarchyModal: React.FC = () => {
       {
         current && (
           <Backdrop onMouseDown={onDismiss}>
-            <Container layoutId={current.hierarchyId?.toString()}>
+            <Container /* layoutId={current.hierarchyId?.toString()} */>
               {
                 current.depth
                   ? <Heading>Mudar porcentagem para o nível <b>{ current.depth }</b></Heading>
