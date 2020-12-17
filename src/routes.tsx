@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 
 import Toolbar from './components/Toolbar';
 
@@ -30,6 +30,7 @@ const Routes: React.FC = () => {
               )
             : <Route path="/" exact component={Auth} />
         }
+        <Redirect to="/" />
       </Switch>
     </BrowserRouter>
   );
