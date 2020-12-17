@@ -1,14 +1,24 @@
-import React, { useContext, useEffect, useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import Backdrop from '../../../../../../components/Backdrop';
-import { ConffirmButton, Container, Heading, Helper, PorcentageTextInput } from './styles';
-
+import immutable from 'immutability-helper';
+import React, { useContext, useEffect, useState } from 'react';
 import { ArrowRight } from 'react-bootstrap-icons';
 
-import HierarchyListContext from '../../context';
+import Backdrop from '../../../../../../components/Backdrop';
+import { ConffirmButton, Container, Heading, Helper, PorcentageTextInput } from './styles';
 import { Hierarchy } from '../../../../../../models/Hierarchy';
 
+import AuthContext from '../../../../../../context/auth';
+import DataContext from '../../../../../../context/data';
+import HierarchyListContext from '../../context';
+
+import { useFetch } from '../../../../../../hooks';
+import Alert from '../../../../../../components/Alert';
+
 const HierarchyModal: React.FC = () => {
+  const { secret } = useContext(AuthContext);
+  const { setHierarchies, hierarchies } = useContext(DataContext);
+
+  const [error, setError] = useState<string | null>(null);
   const { selected, isCreating, setSelected, setIsCreating } = useContext(HierarchyListContext);
   const [current, setCurrent] = useState<Hierarchy | null>(null);
 
@@ -24,11 +34,44 @@ const HierarchyModal: React.FC = () => {
     if (isCreating) setIsCreating(false);
   };
 
+  const create = (): void => {
+    if (current) {
+      useFetch.put(`/m/h/${secret}`, { hierarchy: { depth: hierarchies.length + 1, porcentage: current.porcentage } }, (response) => {
+        if (response.code === 'error') return setError('Não foi possível criar um novo nível na hierarquia');
+
+        const { hierarchyId } = response;
+
+        setHierarchies(immutable(hierarchies, {
+          $push: [{ hierarchyId, depth: hierarchies.length + 1, porcentage: current.porcentage }]
+        }));
+
+        onDismiss();
+      });
+    }
+  };
+
+  const update = (): void => {
+    if (current) {
+      const { hierarchyId, ...rest } = current;
+      useFetch.post(`/m/h/${secret}`, { hierarchyId, hierarchy: rest }, (response) => {
+        if (response.code === 'error') return setError('Não foi possível atualizar este nível');
+
+        const index = hierarchies.findIndex(item => item.hierarchyId === hierarchyId);
+        setHierarchies(immutable(hierarchies, {
+          [index]: { $set: current }
+        }));
+
+        onDismiss();
+      });
+    }
+  };
+
   return (
     <AnimatePresence>
       {
         current && (
           <Backdrop onMouseDown={onDismiss}>
+            <Alert visible={Boolean(error)} onDismiss={() => setError(null)} timeout={4000}>{ error }</Alert>
             <Container /* layoutId={current.hierarchyId?.toString()} */>
               {
                 current.depth
@@ -40,6 +83,7 @@ const HierarchyModal: React.FC = () => {
                 error={current.porcentage < 0 || current.porcentage > 100}
                 value={current.porcentage ?? ''}
                 onChange={e => setCurrent({ ...current, porcentage: parseFloat(e.target.value) })}
+                onKeyDown={e => e.code === 'Enter' ? current.hierarchyId ? update() : create() : null}
               />
               <div style={{ height: 14 }}>
                 <AnimatePresence>
@@ -54,7 +98,7 @@ const HierarchyModal: React.FC = () => {
                 <AnimatePresence>
                   {
                     (!(current.porcentage === selected?.porcentage) && current.porcentage && !(current.porcentage < 0 || current.porcentage > 100)) && (
-                      <ConffirmButton>
+                      <ConffirmButton onClick={() => current.hierarchyId ? update() : create()}>
                         <ArrowRight size={24} color={'black'} />
                       </ConffirmButton>
                     )
