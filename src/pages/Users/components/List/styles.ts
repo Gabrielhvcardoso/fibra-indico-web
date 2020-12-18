@@ -12,11 +12,13 @@ export const Container = styled.div`
 `;
 
 interface ListItemProps {
-  selected?: boolean
+  selected?: boolean,
+  disabled?: boolean,
 }
 
 export const ListItem = styled.div<ListItemProps>`
   cursor: pointer;
+  color: ${props => props.disabled ? 'red' : 'black'};
   background-color: ${props => props.selected ? '#00000011' : '#00000000'};
   white-space: nowrap;
   overflow: hidden;

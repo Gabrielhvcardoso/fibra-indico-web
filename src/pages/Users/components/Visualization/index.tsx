@@ -19,38 +19,30 @@ const Visualization: React.FC = () => {
   const { secret } = useContext(AuthContext);
   const { token } = useContext(UsersContext);
 
-  const [tree, setTree] = useState<null | Array<UserTree>>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [tree, setTree] = useState<UserTree | {}>({});
 
   const containerRef = createRef<HTMLDivElement>();
   const { height, width } = useDimensions(containerRef);
 
   useEffect(() => {
     if (token && secret) {
-      setIsLoading(true);
       useFetch.get(`/m/u/r/${token}/${secret}`, (response: Array<UserTree>) => {
-        setTree(response);
-        setIsLoading(false);
+        setTree(response[0]);
       });
-    } else setTree(null);
+    } else setTree({});
   }, [token, secret]);
-
-  if (!tree) return <></>;
 
   return (
     <Container ref={containerRef} >
       <Options />
-      {
-        !isLoading && (
-          <Tree
-            data={tree[0]}
-            nodeRadius={15}
-            margins={{ top: 20, bottom: 10, left: 20, right: 200 }}
-            height={height}
-            width={width}
-          />
-        )
-      }
+        <Tree
+          data={tree}
+          nodeRadius={15}
+          margins={{ top: 20, bottom: 10, left: 20, right: 200 }}
+          height={height}
+          width={width}
+        />
+      )
     </Container>
   );
 };

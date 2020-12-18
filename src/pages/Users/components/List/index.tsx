@@ -11,8 +11,9 @@ const Users: React.FC = () => {
   return (
     <Container>
       {
-        users.map(({ token: userToken, name }) => (
+        users.map(({ token: userToken, name, status }) => (
           <ListItem
+            disabled={!status}
             selected={token === userToken}
             key={userToken}
             onClick={() => setToken(userToken)}

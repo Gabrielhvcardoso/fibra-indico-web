@@ -28,7 +28,7 @@ export const DataContextProvider: React.FC = ({ children }) => {
   useEffect(() => {
     useFetch.get('/m/h', (response) => setHierarchies(response));
     useFetch.get('/m/p', (response) => setProducts(response));
-    useFetch.get(`/m/u/1/${secret}`, (response) => response.code === 'success' ? setUsers(response.users) : null);
+    useFetch.get(`/m/u/${secret}`, (response) => response.code === 'success' ? setUsers(response.users) : null);
   }, [secret]);
 
   return (

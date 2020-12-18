@@ -22,6 +22,7 @@ export const FloatingButton = styled(motion.div)`
 `;
 
 export const Container = styled(motion.div).attrs({
+  onMouseDown: e => e.stopPropagation(),
   transition: {
     type: 'spring',
     damping: 32,
@@ -30,11 +31,23 @@ export const Container = styled(motion.div).attrs({
 })`
   background-color: white;
   display: flex;
-  height: 250px;
-  justify-content: center;
+  flex-direction: column;
+  padding: 25px 0px;
   position: absolute;
   right: 20px;
   top: calc(10vh + 20px);
   transform-origin: top center;
   width: 250px;
+`;
+
+export const MenuItem = styled.div`
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  height: 40px;
+  justify-content: center;
+
+  &:hover {
+    background-color: #00000011;
+  }
 `;
