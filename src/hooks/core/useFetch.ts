@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:4000';
+const BASE_URL = 'http://dmihost.com.br:21002';
 
 export const useFetch = {
   get: (url = '/', onEnd = (data: any) => {}) => {
