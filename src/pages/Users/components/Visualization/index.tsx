@@ -1,61 +1,56 @@
-import React, { createRef } from 'react';
+import React, { createRef, useContext, useEffect, useState } from 'react';
 import Tree from 'react-tree-graph';
 import { Container } from './styles';
-
 import Options from './components/Options';
 
-import { useDimensions } from '../../../../hooks';
+import { User } from '../../../../models/User';
+
+import AuthContext from '../../../../context/auth';
+import UsersContext from '../../context';
+
+import { useDimensions, useFetch } from '../../../../hooks';
 
 import 'react-tree-graph/dist/style.css';
 import './treeStyles.css';
 
-const data = {
-  name: 'Abraão Silva',
-  textProps: { x: -25, y: 25 },
-  children: [
-    { name: 'Angelo Barbosa', textProps: { x: -25, y: 25 } },
-    {
-      name: 'Rodrigo Souza',
-      textProps: { x: -25, y: 25 },
-      children: [
-        { name: 'Marielle Astouto' },
-        { name: 'Hulia Nayeros' }
-      ]
-    },
-    { name: 'Maria das Neves', textProps: { x: -25, y: 25 } },
-    {
-      name: 'Américo Santos Albuquerque',
-      textProps: { x: -25, y: 25 },
-      children: [
-        { name: 'Angelica Barbosa', textProps: { x: -25, y: 25 } },
-        { name: 'Adolfo Ruttenford', textProps: { x: -25, y: 25 } },
-        {
-          name: 'Cláudio Araújo',
-          textProps: { x: -25, y: -25 },
-          children: [
-            { name: 'Ana Júlia Silva', textProps: { x: -25, y: 25 } }
-          ]
-        }
-      ]
-    }
-  ]
-};
+export type UserTree = User & { children?: UserTree };
 
 const Visualization: React.FC = () => {
-  const containerRef = createRef<HTMLDivElement>();
+  const { secret } = useContext(AuthContext);
+  const { token } = useContext(UsersContext);
 
+  const [tree, setTree] = useState<null | Array<UserTree>>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const containerRef = createRef<HTMLDivElement>();
   const { height, width } = useDimensions(containerRef);
+
+  useEffect(() => {
+    if (token && secret) {
+      setIsLoading(true);
+      useFetch.get(`/m/u/r/${token}/${secret}`, (response: Array<UserTree>) => {
+        setTree(response);
+        setIsLoading(false);
+      });
+    } else setTree(null);
+  }, [token, secret]);
+
+  if (!tree) return <></>;
 
   return (
     <Container ref={containerRef} >
       <Options />
-      <Tree
-        data={data}
-        nodeRadius={15}
-        margins={{ top: 20, bottom: 10, left: 20, right: 200 }}
-        height={height}
-        width={width}
-      />
+      {
+        !isLoading && (
+          <Tree
+            data={tree[0]}
+            nodeRadius={15}
+            margins={{ top: 20, bottom: 10, left: 20, right: 200 }}
+            height={height}
+            width={width}
+          />
+        )
+      }
     </Container>
   );
 };

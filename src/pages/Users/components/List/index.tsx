@@ -1,17 +1,12 @@
 import React, { useContext } from 'react';
 import { Container, ListItem } from './styles';
 
+import DataContext from '../../../../context/data';
 import UsersContext from '../../context';
 
 const Users: React.FC = () => {
+  const { users } = useContext(DataContext);
   const { token, setToken } = useContext(UsersContext);
-
-  const users = [
-    { token: 'f6abe778', name: 'Abraão Silva' },
-    { token: 'badef5eb', name: 'Adriana Salmon' },
-    { token: 'eb78da12', name: 'Angelo Barbosa' },
-    { token: '8aff4db6', name: 'Américo Santos Albuquerque Cunha' }
-  ];
 
   return (
     <Container>
