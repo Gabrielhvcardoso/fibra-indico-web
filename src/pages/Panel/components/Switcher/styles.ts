@@ -1,15 +1,5 @@
+import { motion } from 'framer-motion';
 import styled from 'styled-components';
-
-export const Container = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  padding: 25px;
-
-  @media (max-width: 768px) {
-    padding-bottom: 70px;
-  }
-`;
 
 export const CanvasNav = styled.nav`
   align-self: flex-start;
@@ -20,22 +10,31 @@ export const CanvasNav = styled.nav`
   margin-bottom: 10px;
 `;
 
-export const Canvas = styled.div`
-  display: flex;
-  flex: 1;
-`;
+interface NavItemProps {
+  selected?: boolean;
+}
 
-export const NavItem = styled.div`
+export const NavItem = styled(motion.div)<NavItemProps>`
   align-items: center;
+  color: black;
   display: flex;
   height: 50px;
   padding: 0px 25px;
   position: relative;
 `;
 
-export const NavSelect = styled.div`
-  background-color: #00000011;
+export const NavSelect = styled(motion.div).attrs({
+  transition: {
+    type: 'spring',
+    damping: 32,
+    stiffness: 500
+  }
+})`
+  align-items: center;
+  display: flex;
+  background-color: #ffffff;
   border-radius: 25px;
+  justify-content: center;
   position: absolute;
   top: 0; left:0; right: 0; bottom: 0;
 `;
