@@ -33,7 +33,7 @@ const Recommendations: React.FC = () => {
     <Container>
       {
         recommendations.map(item => {
-          const { recommendationId, client, status, createdAt, user } = item;
+          const { recommendationId, client, status, createdAt, user, product } = item;
 
           return (
             <ListItem
@@ -41,7 +41,7 @@ const Recommendations: React.FC = () => {
               onClick={() => setSelected(item)}
             >
               <Column>
-                <span>{ client }</span>
+                <span>{ product.title } ({ client })</span>
                 <small>Indicado por <i style={{ color: 'blue' }}>{ user.name }</i></small>
                 <small>{ status } - há { formatDistanceToNow(parseInt(createdAt), { locale: ptBR }) }</small>
               </Column>
