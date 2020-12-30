@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { ArrowRight } from 'react-bootstrap-icons';
 
 import Backdrop from '../../../../../../components/Backdrop';
-import { ConffirmButton, Container, Heading, Helper, PorcentageTextInput } from './styles';
+import { ConffirmButton, Container, Heading, Helper, Link, PorcentageTextInput } from './styles';
 import { Hierarchy } from '../../../../../../models/Hierarchy';
 
 import AuthContext from '../../../../../../context/auth';
@@ -35,14 +35,16 @@ const HierarchyModal: React.FC = () => {
   };
 
   const create = (): void => {
+    const depth = Math.max.apply(Math, hierarchies.map(({ depth }) => depth)) + 1;
+
     if (current) {
-      useFetch.put(`/m/h/${secret}`, { hierarchy: { depth: hierarchies.length + 1, porcentage: current.porcentage } }, (response) => {
+      useFetch.put(`/m/h/${secret}`, { hierarchy: { depth, porcentage: current.porcentage } }, (response) => {
         if (response.code === 'error') return setError('Não foi possível criar um novo nível na hierarquia');
 
         const { hierarchyId } = response;
 
         setHierarchies(immutable(hierarchies, {
-          $push: [{ hierarchyId, depth: hierarchies.length + 1, porcentage: current.porcentage }]
+          $push: [{ hierarchyId, depth, porcentage: current.porcentage }]
         }));
 
         onDismiss();
@@ -59,6 +61,21 @@ const HierarchyModal: React.FC = () => {
         const index = hierarchies.findIndex(item => item.hierarchyId === hierarchyId);
         setHierarchies(immutable(hierarchies, {
           [index]: { $set: current }
+        }));
+
+        onDismiss();
+      });
+    }
+  };
+
+  const destroy = () => {
+    if (current && current.hierarchyId) {
+      useFetch.delete(`/m/h/${current.hierarchyId}/${secret}`, (response) => {
+        if (response.code === 'error') return setError('Não foi possível remover este nível');
+
+        const index = hierarchies.findIndex(item => item.hierarchyId === current.hierarchyId);
+        setHierarchies(immutable(hierarchies, {
+          $splice: [[index, 1]]
         }));
 
         onDismiss();
@@ -105,7 +122,7 @@ const HierarchyModal: React.FC = () => {
                   }
                 </AnimatePresence>
               </div>
-
+              { current.depth && <Link onClick={destroy}>Excluir produto</Link> }
             </Container>
           </Backdrop>
         )

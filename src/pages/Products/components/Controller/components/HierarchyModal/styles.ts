@@ -1,6 +1,17 @@
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
+export const Link = styled(motion.span).attrs({
+  initial: { translateX: -20, opacity: 0 },
+  animate: { translateX: 0, opacity: 1 },
+  exit: { translateX: 20, opacity: 0 }
+})`
+  cursor: pointer;
+  &:hover {
+    color: red;
+  }
+`;
+
 export const Container = styled(motion.div).attrs({
   initial: { translateY: -50, opacity: 0 },
   animate: { translateY: 0, opacity: 1 },
