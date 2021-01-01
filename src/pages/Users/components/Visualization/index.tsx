@@ -27,7 +27,8 @@ const Visualization: React.FC = () => {
   useEffect(() => {
     if (token && secret) {
       useFetch.get(`/m/u/r/${token}/${secret}`, (response: Array<UserTree>) => {
-        setTree(response[0]);
+        console.log(response);
+        setTree(response[0] ?? []);
       });
     } else setTree({});
   }, [token, secret]);
