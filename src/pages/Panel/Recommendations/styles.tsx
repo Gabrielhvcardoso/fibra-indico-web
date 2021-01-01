@@ -1,6 +1,20 @@
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
+export const FloatingButton = styled.div`
+  background-color: #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 10px;
+  padding: 10px 20px;
+  position: absolute;
+  top: -50px;
+
+  &:hover {
+    background-color: #d0d0d0;
+  }
+`;
+
 export const Button = styled.div`
   background-color: #eee;
   border-radius: 4px;
@@ -24,6 +38,8 @@ export const Container = styled(motion.div).attrs({
 })`
   flex: 1;
   background-color: #eee;
+  position: relative;
+  margin-top: 50px;
 `;
 
 export const ListItem = styled.div`
