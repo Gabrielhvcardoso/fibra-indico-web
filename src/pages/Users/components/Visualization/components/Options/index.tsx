@@ -3,7 +3,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Portal } from 'react-portal';
 import { X, ThreeDotsVertical } from 'react-bootstrap-icons';
 import { AnimatePresence, AnimateSharedLayout } from 'framer-motion';
-import { Container, Close, FloatingButton, MenuItem } from './styles';
+import { Container, Close, FloatingButton, MenuItem, PassModal, TextInput, Button } from './styles';
+import Alert from '../../../../../../components/Alert';
 import Backdrop from '../../../../../../components/Backdrop';
 
 import AuthContext from '../../../../../../context/auth';
@@ -18,7 +19,11 @@ const Options: React.FC = () => {
   const { token } = useContext(UsersContext);
 
   const [current, setCurrent] = useState<null | User>(null);
+  const [password, setPassword] = useState<string>('');
   const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  const [changingPassword, setChangingPassword] = useState<boolean>(false);
+  const [changingPasswordError, setChangingPasswordError] = useState<null | string>(null);
 
   useEffect(() => {
     if (token) {
@@ -30,6 +35,20 @@ const Options: React.FC = () => {
   const onDismiss = () => setIsOpen(false);
 
   if (!current) return <></>;
+
+  const updatePassword = () => {
+    const { secret, token } = current;
+
+    if (!password || password.length < 8 || password.length > 20) {
+      return setChangingPasswordError('A senha deve ter entre 8 e 20 caracteres');
+    }
+
+    useFetch.post(`/u/${token}/${secret}`, {
+      user: { ...current, password }
+    }, (response) => {
+      setChangingPassword(false);
+    });
+  };
 
   const changeStatus = () => {
     if (current) {
@@ -55,6 +74,20 @@ const Options: React.FC = () => {
           {
             isOpen && (
               <Backdrop onMouseDown={onDismiss}>
+                {
+                  changingPassword && (
+                    <Backdrop onMouseDown={() => setChangingPassword(true)}>
+                      <Alert visible={Boolean(changingPasswordError)} onDismiss={() => setChangingPasswordError(null)} timeout={4000}>
+                        { changingPasswordError }
+                      </Alert>
+                      <PassModal>
+                        <p style={{ margin: 0 }}>Mudar senha</p>
+                        <TextInput value={password} onChange={e => setPassword(e.target.value)} type="text" />
+                        <Button onClick={updatePassword}>Salvar</Button>
+                      </PassModal>
+                    </Backdrop>
+                  )
+                }
                 <Container layoutId="float-btn">
                   <Close>
                     <X size={25} onClick={onDismiss} style={{ cursor: 'pointer' }} />
@@ -62,7 +95,7 @@ const Options: React.FC = () => {
                   <MenuItem onClick={changeStatus}>
                     { current.status ? 'Desativar usuário' : 'Reativar usuário' }
                   </MenuItem>
-                  <MenuItem>Mudar senha</MenuItem>
+                  <MenuItem onClick={() => setChangingPassword(true)}>Mudar senha</MenuItem>
                 </Container>
               </Backdrop>
             )

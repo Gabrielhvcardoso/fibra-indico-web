@@ -51,3 +51,41 @@ export const MenuItem = styled.div`
     background-color: #00000011;
   }
 `;
+
+export const PassModal = styled(motion.div).attrs({
+  onMouseDown: e => e.stopPropagation(),
+  initial: { opacity: 0, translateY: -50 },
+  animate: { opacity: 1, translateY: 0 },
+  exit: { opacity: 0, translateY: 50 },
+  transition: {
+    type: 'spring',
+    damping: 32,
+    stiffness: 500
+  }
+})`
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+`;
+
+export const TextInput = styled.input`
+  background-color: #eee;
+  border-radius: 4px;
+  border: none;
+  font-family: 'WorkSans', sans-serif;
+  font-size: 19px;
+  height: 40px;
+  padding: 0px 15px;
+  width: 300px;
+`;
+
+export const Button = styled.button`
+  background-color: #2b7ed722;
+  border: none;
+  color: #2b7ed7;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+  padding: 10px 0px;
+`;
