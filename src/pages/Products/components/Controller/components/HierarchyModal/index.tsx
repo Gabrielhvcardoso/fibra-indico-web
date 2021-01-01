@@ -35,7 +35,7 @@ const HierarchyModal: React.FC = () => {
   };
 
   const create = (): void => {
-    const depth = Math.max.apply(Math, hierarchies.map(({ depth }) => depth)) + 1;
+    const depth = Math.max.apply(Math, hierarchies.map(({ depth }) => depth)) + 1 | 1;
 
     if (current) {
       useFetch.put(`/m/h/${secret}`, { hierarchy: { depth, porcentage: current.porcentage } }, (response) => {
