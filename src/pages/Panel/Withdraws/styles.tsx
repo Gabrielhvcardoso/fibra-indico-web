@@ -20,6 +20,8 @@ export const Container = styled(motion.div).attrs({
 })`
   flex: 1;
   background-color: #eee;
+  position: relative;
+  margin-top: 50px;
 `;
 
 const ItemContainer = styled.div`

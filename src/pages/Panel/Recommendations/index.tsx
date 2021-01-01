@@ -63,7 +63,8 @@ const Recommendations: React.FC = () => {
 
   return (
     <Container>
-      <FloatingButton onClick={() => setShowAll(!showAll)}>
+      <FloatingButton
+        onClick={() => setShowAll(!showAll)}>
         { showAll ? 'Filtrar pendentes' : 'Mostrar todos' }
       </FloatingButton>
       {

@@ -12,7 +12,7 @@ import { AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import { currencyFormat } from '../../../utils';
 import { Account } from '../../../models/Account';
-import { Button } from '../Recommendations/styles';
+import { Button, FloatingButton } from '../Recommendations/styles';
 import Alert from '../../../components/Alert';
 
 type WithdrawOrder = Omit<Withdraw, 'fromUserToken'> & { user: User };
@@ -25,6 +25,7 @@ const Withdraws: React.FC = () => {
 
   const [selected, setSelected] = useState<WithdrawOrder | null>(null);
   const [selectedAccount, setSelectedAccount] = useState<null | Account>(null);
+  const [showAll, setShowAll] = useState<boolean>(false);
 
   useEffect(() => {
     useFetch.get(`/m/w/${secret}`, (response) => {
@@ -59,8 +60,16 @@ const Withdraws: React.FC = () => {
 
   return (
     <Container>
+      <FloatingButton
+        onClick={() => setShowAll(!showAll)}
+      >
+        { showAll ? 'Filtrar pendentes' : 'Mostrar todos' }
+      </FloatingButton>
       {
-        withdraws.filter(({ status }) => status !== 'done').map((item) => (
+        [
+          ...withdraws.filter(({ status }) => showAll ? true : status !== 'done'),
+          ...withdraws.filter(({ status }) => showAll ? true : status !== 'done')
+        ].map((item) => (
           <WithdrawItem
             item={item}
             key={item.withdrawOrderId}
