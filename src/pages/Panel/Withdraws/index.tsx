@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useFetch } from '../../../hooks';
 import { Container, Modal, WithdrawItem } from './styles';
+import update from 'immutability-helper';
 
 import { Withdraw } from '../../../models/Withdraw';
 import { User } from '../../../models/User';
@@ -12,6 +13,7 @@ import { format } from 'date-fns';
 import { currencyFormat } from '../../../utils';
 import { Account } from '../../../models/Account';
 import { Button } from '../Recommendations/styles';
+import Alert from '../../../components/Alert';
 
 type WithdrawOrder = Omit<Withdraw, 'fromUserToken'> & { user: User };
 
@@ -19,6 +21,7 @@ const Withdraws: React.FC = () => {
   const { secret } = useContext(AuthContext);
 
   const [withdraws, setWithdraws] = useState<Array<WithdrawOrder>>([]);
+  const [error, setError] = useState<null | string>(null);
 
   const [selected, setSelected] = useState<WithdrawOrder | null>(null);
   const [selectedAccount, setSelectedAccount] = useState<null | Account>(null);
@@ -40,10 +43,24 @@ const Withdraws: React.FC = () => {
     setSelectedAccount(null);
   }, [selected]);
 
+  const setWithdrawStatus = (withdrawOrderId: number, status: string) => {
+    useFetch.post(`/m/w/${secret}`, { withdrawOrderId, status }, (response) => {
+      if (response.code === 'error') {
+        return setError('Não foi possível alterar o status do pedido de saque');
+      }
+
+      const index = withdraws.findIndex(({ withdrawOrderId: currentId }) => withdrawOrderId === currentId);
+      setWithdraws(update(withdraws, {
+        [index]: { $set: { ...withdraws[index], status } }
+      }));
+      setSelected(null);
+    });
+  };
+
   return (
     <Container>
       {
-        withdraws.map((item) => (
+        withdraws.filter(({ status }) => status !== 'done').map((item) => (
           <WithdrawItem
             item={item}
             key={item.withdrawOrderId}
@@ -55,6 +72,9 @@ const Withdraws: React.FC = () => {
         {
           selected && (
             <Backdrop onMouseDown={() => setSelected(null)}>
+              <Alert visible={Boolean(error)} onDismiss={() => setError(null)} timeout={4000}>
+                { error }
+              </Alert>
               <Modal>
                 <p>Detalhes sobre a pedido de { selected.user.name }</p>
                 <p>{ currencyFormat(selected.amount, true) } - { format(parseInt(selected.createdAt), 'dd/MM/yyyy - kk:mm') }</p>
@@ -95,9 +115,9 @@ const Withdraws: React.FC = () => {
                 </div>
 
                 <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 20 }}>
-                  <Button style={{ marginRight: 10 }}>Recusar</Button>
-                  <Button style={{ marginRight: 10 }}>Com problemas</Button>
-                  <Button>Confirmar pagamento</Button>
+                  <Button onClick={() => setWithdrawStatus(selected.withdrawOrderId, 'recused')} style={{ marginRight: 10 }}>Recusar</Button>
+                  <Button onClick={() => setWithdrawStatus(selected.withdrawOrderId, 'failed')} style={{ marginRight: 10 }}>Com problemas</Button>
+                  <Button onClick={() => setWithdrawStatus(selected.withdrawOrderId, 'done')}>Confirmar pagamento</Button>
                 </div>
               </Modal>
             </Backdrop>

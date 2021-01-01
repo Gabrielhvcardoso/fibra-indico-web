@@ -34,12 +34,22 @@ const ItemContainer = styled.div`
   }
 `;
 
+const resolveStatus = (status: string) => {
+  switch (status) {
+    case 'pending': return 'Pendente';
+    case 'recused': return 'Recusado';
+    case 'failed': return 'Com problemas';
+    case 'done': return 'Finalizado';
+    default: return 'Indefinido';
+  }
+};
+
 export const WithdrawItem: React.FC<{ item: WithdrawOrder, onClick: () => void }> = ({ item, onClick }) => {
   return (
     <ItemContainer onClick={onClick}>
-      <span>{ item.user.name } - <i style={{ color: 'blue' }}>{ currencyFormat(item.amount, true) }</i></span>
+      <span>{ item.user.name } - <b style={{ color: 'blue' }}>{ currencyFormat(item.amount, true) }</b></span>
       <small>{ item.user.city } - { item.user.state }</small>
-      <small>{ item.status } - há { formatDistanceToNow(parseInt(item.createdAt), { locale: ptBR }) }</small>
+      <small><b style={{ color: 'blue' }}>{ resolveStatus(item.status) }</b> - há { formatDistanceToNow(parseInt(item.createdAt), { locale: ptBR }) }</small>
     </ItemContainer>
   );
 };
