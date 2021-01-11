@@ -6,3 +6,8 @@ export interface Withdraw {
   createdAt: string,
   method: string
 }
+
+export const isWithdraw = (toBeDetermined: any | Withdraw): toBeDetermined is Withdraw => {
+  if ((toBeDetermined as Withdraw).withdrawOrderId) return true;
+  return false;
+};

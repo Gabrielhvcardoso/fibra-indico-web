@@ -16,7 +16,7 @@ import { useFetch } from '../../../../../../hooks';
 const Options: React.FC = () => {
   const { secret } = useContext(AuthContext);
   const { users, setUsers } = useContext(DataContext);
-  const { token } = useContext(UsersContext);
+  const { token, setIsDetailOpened } = useContext(UsersContext);
 
   const [current, setCurrent] = useState<null | User>(null);
   const [password, setPassword] = useState<string>('');
@@ -32,7 +32,10 @@ const Options: React.FC = () => {
     } else setCurrent(null);
   }, [users, token]);
 
-  const onDismiss = () => setIsOpen(false);
+  const onDismiss = () => {
+    setIsOpen(false);
+    if (changingPassword) setChangingPassword(false);
+  };
 
   if (!current) return <></>;
 
@@ -76,12 +79,12 @@ const Options: React.FC = () => {
               <Backdrop onMouseDown={onDismiss}>
                 {
                   changingPassword && (
-                    <Backdrop onMouseDown={() => setChangingPassword(true)}>
+                    <Backdrop>
                       <Alert visible={Boolean(changingPasswordError)} onDismiss={() => setChangingPasswordError(null)} timeout={4000}>
                         { changingPasswordError }
                       </Alert>
                       <PassModal>
-                        <p style={{ margin: 0 }}>Mudar senha</p>
+                        <p style={{ marginTop: 0 }}>Mudar senha</p>
                         <TextInput value={password} onChange={e => setPassword(e.target.value)} type="text" />
                         <Button onClick={updatePassword}>Salvar</Button>
                       </PassModal>
@@ -92,6 +95,7 @@ const Options: React.FC = () => {
                   <Close>
                     <X size={25} onClick={onDismiss} style={{ cursor: 'pointer' }} />
                   </Close>
+                  <MenuItem style={{ color: current.status ? 'black' : 'red' }} onClick={() => setIsDetailOpened(true)}>Detalhes</MenuItem>
                   <MenuItem onClick={changeStatus}>
                     { current.status ? 'Desativar usuário' : 'Reativar usuário' }
                   </MenuItem>

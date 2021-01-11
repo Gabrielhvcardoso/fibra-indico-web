@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { SyntheticEvent } from 'react';
 import { Portal } from 'react-portal';
 import { Container } from './styles';
 
 interface BackdropProps {
-  onMouseDown?: () => void,
+  onMouseDown?: (e: SyntheticEvent) => void,
   onMouseUp?: () => void,
   onMouseMove?: () => void,
   onClick?: () => void
