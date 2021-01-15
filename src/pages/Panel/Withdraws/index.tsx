@@ -12,7 +12,7 @@ import { AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import { currencyFormat } from '../../../utils';
 import { Account } from '../../../models/Account';
-import { Button, FloatingButton } from '../Recommendations/styles';
+import { Button, TopButton } from '../Recommendations/styles';
 import Alert from '../../../components/Alert';
 
 type WithdrawOrder = Omit<Withdraw, 'fromUserToken'> & { user: User };
@@ -60,11 +60,11 @@ const Withdraws: React.FC = () => {
 
   return (
     <Container>
-      <FloatingButton
+      <TopButton
         onClick={() => setShowAll(!showAll)}
       >
         { showAll ? 'Filtrar pendentes' : 'Mostrar todos' }
-      </FloatingButton>
+      </TopButton>
       {
         [
           ...withdraws.filter(({ status }) => showAll ? true : status !== 'done'),

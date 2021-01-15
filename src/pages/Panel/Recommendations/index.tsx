@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import Backdrop from '../../../components/Backdrop';
 import { AnimatePresence } from 'framer-motion';
-import { Button, Column, Container, FloatingButton, ListItem, Modal } from './styles';
+import { Button, Column, Container, TopButton, FloatingContainer, ListItem, Modal, Select } from './styles';
 import update from 'immutability-helper';
 
 import { Product } from '../../../models/Product';
@@ -12,9 +12,11 @@ import AuthContext from '../../../context/auth';
 
 import { currencyFormat } from '../../../utils';
 import { useFetch } from '../../../hooks';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow, setHours, setMinutes, setSeconds, setMilliseconds, subDays, subWeeks, subMonths, subYears } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import Alert from '../../../components/Alert';
+
+import './arrow.css';
 
 type RecommendationWithUser = Omit<Omit<Recommendation, 'fromUserToken'>, 'productId'> & { user: User, product: Product };
 
@@ -24,6 +26,71 @@ const Recommendations: React.FC = () => {
   const [selected, setSelected] = useState<null | RecommendationWithUser>(null);
   const [error, setError] = useState<null | string>(null);
   const [recommendations, setRecommendations] = useState<Array<RecommendationWithUser>>([]);
+
+  const [dateLimits, setDateLimits] = useState<null | { start: number, end: number }>(null);
+
+  const setFilter = (filter: number) => {
+    /*
+      DATE FILTER
+      0 - ALL
+      1 - HOJE
+      2 - ESSA SEMANA
+      3 - ESSE MÊS
+      4 - TRÊS MESES
+      5 - SEIS MESES
+      6 - ESSE ANO
+      7 - ANO PASSADO
+    */
+
+    const today = setHours(setMinutes(setSeconds(setMilliseconds(new Date().getTime(), 0), 0), 0), 0).getTime();
+    let start: null | number, end: null | number;
+
+    switch (filter) {
+      case 1:
+        start = today;
+        end = subDays(today, 1).getTime();
+        break;
+
+      case 2:
+        start = today;
+        end = subWeeks(today, 1).getTime();
+        break;
+
+      case 3:
+        start = today;
+        end = subMonths(today, 1).getTime();
+        break;
+
+      case 4:
+        start = today;
+        end = subMonths(today, 3).getTime();
+        break;
+
+      case 5:
+        start = today;
+        end = subMonths(today, 6).getTime();
+        break;
+
+      case 6:
+        start = today;
+        end = subYears(today, 1).getTime();
+        break;
+
+      case 7:
+        start = subYears(today, 1).getTime();
+        end = subYears(today, 2).getTime();
+        break;
+
+      default:
+        start = null;
+        end = null;
+        break;
+    }
+
+    console.log(start + ' - ' + end);
+    if (start && end) setDateLimits({ start, end });
+    else setDateLimits(null);
+  };
 
   const [showAll, setShowAll] = useState<boolean>(false);
 
@@ -61,14 +128,37 @@ const Recommendations: React.FC = () => {
     }
   };
 
+  const displayRecommendations = useMemo(() => {
+    if (dateLimits) {
+      const { start, end } = dateLimits;
+      return recommendations.filter(({ createdAt }) => parseInt(createdAt) < start && parseInt(createdAt) > end);
+    } else {
+      return recommendations;
+    }
+  }, [recommendations, dateLimits]);
+
   return (
     <Container>
-      <FloatingButton
-        onClick={() => setShowAll(!showAll)}>
-        { showAll ? 'Filtrar pendentes' : 'Mostrar todos' }
-      </FloatingButton>
+      <FloatingContainer>
+        <TopButton
+          onClick={() => setShowAll(!showAll)}>
+          { showAll ? 'Filtrar pendentes' : 'Mostrar todos' }
+        </TopButton>
+
+        <Select onChange={e => setFilter(parseInt(e.target.value))}>
+          <option value={0}>Tudo</option>
+          <option value={1}>Hoje</option>
+          <option value={2}>Últimos 7 dias</option>
+          <option value={3}>Últimos 30 dias</option>
+          <option value={4}>Últimos 3 meses</option>
+          <option value={5}>Últimos 6 meses</option>
+          <option value={6}>Último ano</option>
+          <option value={7}>Ano passado</option>
+        </Select>
+      </FloatingContainer>
+
       {
-        recommendations.filter(({ status }) => showAll ? true : status === 'pendent').map(item => {
+        displayRecommendations.filter(({ status }) => showAll ? true : status === 'pendent').map(item => {
           const { recommendationId, client, status, createdAt, user, product } = item;
 
           return (

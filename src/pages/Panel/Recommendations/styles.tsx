@@ -1,18 +1,36 @@
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
-export const FloatingButton = styled.div`
+export const TopButton = styled.div`
   background-color: #ddd;
   border-radius: 4px;
   cursor: pointer;
   margin-left: 10px;
   padding: 10px 20px;
-  position: absolute;
-  top: -50px;
+  &:hover {
+    background-color: #d0d0d0;
+  }
+`;
+
+export const Select = styled.select`
+  background-color: #ddd;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-left: 10px;
+  padding: 10px 20px;
 
   &:hover {
     background-color: #d0d0d0;
   }
+`;
+
+export const FloatingContainer = styled.div`
+  align-items: center;
+  display: flex;
+  position: absolute;
+  top: -50px;
 `;
 
 export const Button = styled.div`
