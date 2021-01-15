@@ -13,7 +13,11 @@ import UsersContext from '../../../../context';
 import { User } from '../../../../../../models/User';
 import { useFetch } from '../../../../../../hooks';
 
-const Options: React.FC = () => {
+interface Props {
+  findTree: () => void
+}
+
+const Options: React.FC<Props> = ({ findTree }) => {
   const { secret } = useContext(AuthContext);
   const { users, setUsers } = useContext(DataContext);
   const { token, setIsDetailOpened } = useContext(UsersContext);
@@ -69,6 +73,7 @@ const Options: React.FC = () => {
       user: { ...current, indicatedBy: indicatedBy.toLowerCase() }
     }, (response) => {
       setChangingIndicatedBy(false);
+      findTree();
     });
   };
 

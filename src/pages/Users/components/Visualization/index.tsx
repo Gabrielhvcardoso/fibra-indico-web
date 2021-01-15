@@ -27,13 +27,17 @@ const Visualization: React.FC = () => {
   const { height, width } = useDimensions(containerRef);
 
   useEffect(() => {
+    findTree();
+  }, [token, secret]);
+
+  const findTree = () => {
     if (token && secret) {
       useFetch.get(`/m/u/r/${token}/${secret}`, (response: Array<UserTree>) => {
         console.log(response);
         setTree(response[0] ?? []);
       });
     } else setTree({});
-  }, [token, secret]);
+  };
 
   const seeIndicatedBy = (utoken: string) => {
     const user = users.find(({ token: userToken }) => utoken === userToken);
@@ -46,7 +50,7 @@ const Visualization: React.FC = () => {
 
   return (
     <Container ref={containerRef} >
-      <Options />
+      <Options findTree={findTree} />
       { indicatedBy && <IndicatedTag onClick={() => seeIndicatedBy(indicatedBy)}>Indicado por: { indicatedBy.toUpperCase() }</IndicatedTag> }
         <Tree
           data={tree}
