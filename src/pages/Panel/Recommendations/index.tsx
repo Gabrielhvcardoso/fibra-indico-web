@@ -129,13 +129,15 @@ const Recommendations: React.FC = () => {
   };
 
   const displayRecommendations = useMemo(() => {
+    const returning = recommendations.filter(({ status }) => showAll ? true : status === 'pendent');
+
     if (dateLimits) {
       const { start, end } = dateLimits;
-      return recommendations.filter(({ createdAt }) => parseInt(createdAt) < start && parseInt(createdAt) > end);
+      return returning.filter(({ createdAt }) => parseInt(createdAt) < start && parseInt(createdAt) > end);
     } else {
-      return recommendations;
+      return returning;
     }
-  }, [recommendations, dateLimits]);
+  }, [showAll, recommendations, dateLimits]);
 
   return (
     <Container>
@@ -158,7 +160,7 @@ const Recommendations: React.FC = () => {
       </FloatingContainer>
 
       {
-        displayRecommendations.filter(({ status }) => showAll ? true : status === 'pendent').map(item => {
+        displayRecommendations.map(item => {
           const { recommendationId, client, status, createdAt, user, product } = item;
 
           return (

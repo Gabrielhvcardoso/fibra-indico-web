@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { useFetch } from '../../../hooks';
 import { Container, Modal, WithdrawItem } from './styles';
 import update from 'immutability-helper';
@@ -9,10 +9,10 @@ import { User } from '../../../models/User';
 import AuthContext from '../../../context/auth';
 import Backdrop from '../../../components/Backdrop';
 import { AnimatePresence } from 'framer-motion';
-import { format } from 'date-fns';
+import { format, setHours, setMinutes, setSeconds, setMilliseconds, subDays, subWeeks, subMonths, subYears } from 'date-fns';
 import { currencyFormat } from '../../../utils';
 import { Account } from '../../../models/Account';
-import { Button, TopButton } from '../Recommendations/styles';
+import { Button, TopButton, FloatingContainer, Select } from '../Recommendations/styles';
 import Alert from '../../../components/Alert';
 
 type WithdrawOrder = Omit<Withdraw, 'fromUserToken'> & { user: User };
@@ -26,6 +26,71 @@ const Withdraws: React.FC = () => {
   const [selected, setSelected] = useState<WithdrawOrder | null>(null);
   const [selectedAccount, setSelectedAccount] = useState<null | Account>(null);
   const [showAll, setShowAll] = useState<boolean>(false);
+
+  const [dateLimits, setDateLimits] = useState<null | { start: number, end: number }>(null);
+
+  const setFilter = (filter: number) => {
+    /*
+      DATE FILTER
+      0 - ALL
+      1 - HOJE
+      2 - ESSA SEMANA
+      3 - ESSE MÊS
+      4 - TRÊS MESES
+      5 - SEIS MESES
+      6 - ESSE ANO
+      7 - ANO PASSADO
+    */
+
+    const today = setHours(setMinutes(setSeconds(setMilliseconds(new Date().getTime(), 0), 0), 0), 0).getTime();
+    let start: null | number, end: null | number;
+
+    switch (filter) {
+      case 1:
+        start = today;
+        end = subDays(today, 1).getTime();
+        break;
+
+      case 2:
+        start = today;
+        end = subWeeks(today, 1).getTime();
+        break;
+
+      case 3:
+        start = today;
+        end = subMonths(today, 1).getTime();
+        break;
+
+      case 4:
+        start = today;
+        end = subMonths(today, 3).getTime();
+        break;
+
+      case 5:
+        start = today;
+        end = subMonths(today, 6).getTime();
+        break;
+
+      case 6:
+        start = today;
+        end = subYears(today, 1).getTime();
+        break;
+
+      case 7:
+        start = subYears(today, 1).getTime();
+        end = subYears(today, 2).getTime();
+        break;
+
+      default:
+        start = null;
+        end = null;
+        break;
+    }
+
+    console.log(start + ' - ' + end);
+    if (start && end) setDateLimits({ start, end });
+    else setDateLimits(null);
+  };
 
   useEffect(() => {
     useFetch.get(`/m/w/${secret}`, (response) => {
@@ -58,24 +123,44 @@ const Withdraws: React.FC = () => {
     });
   };
 
+  const displayedWithdraws = useMemo(() => {
+    const returning = showAll ? withdraws : withdraws.filter(({ status }) => status === 'pending');
+    if (dateLimits) {
+      const { start, end } = dateLimits;
+      return returning.filter(({ createdAt }) => parseInt(createdAt) < start && parseInt(createdAt) > end);
+    } else {
+      return returning;
+    }
+  }, [showAll, withdraws, dateLimits]);
+
   return (
     <Container>
-      <TopButton
-        onClick={() => setShowAll(!showAll)}
-      >
-        { showAll ? 'Filtrar pendentes' : 'Mostrar todos' }
-      </TopButton>
+      <FloatingContainer>
+        <TopButton
+          onClick={() => setShowAll(!showAll)}
+        >
+          { showAll ? 'Filtrar pendentes' : 'Mostrar todos' }
+        </TopButton>
+
+        <Select onChange={e => setFilter(parseInt(e.target.value))}>
+          <option value={0}>Tudo</option>
+          <option value={1}>Hoje</option>
+          <option value={2}>Últimos 7 dias</option>
+          <option value={3}>Últimos 30 dias</option>
+          <option value={4}>Últimos 3 meses</option>
+          <option value={5}>Últimos 6 meses</option>
+          <option value={6}>Último ano</option>
+          <option value={7}>Ano passado</option>
+        </Select>
+      </FloatingContainer>
       {
-        [
-          ...withdraws.filter(({ status }) => showAll ? true : status !== 'done'),
-          ...withdraws.filter(({ status }) => showAll ? true : status !== 'done')
-        ].map((item) => (
+       displayedWithdraws.map((item) => (
           <WithdrawItem
             item={item}
             key={item.withdrawOrderId}
             onClick={() => setSelected(item)}
           />
-        ))
+       ))
       }
       <AnimatePresence>
         {
