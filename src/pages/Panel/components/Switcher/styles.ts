@@ -17,6 +17,7 @@ interface NavItemProps {
 export const NavItem = styled(motion.div)<NavItemProps>`
   align-items: center;
   color: black;
+  cursor: pointer;
   display: flex;
   height: 50px;
   padding: 0px 25px;
