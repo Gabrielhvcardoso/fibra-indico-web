@@ -1,11 +1,12 @@
 import React, { createRef, useContext, useEffect, useState } from 'react';
 import Tree from 'react-tree-graph';
-import { Container } from './styles';
+import { Container, IndicatedTag } from './styles';
 import Options from './components/Options';
 
 import { User } from '../../../../models/User';
 
 import AuthContext from '../../../../context/auth';
+import DataContext from '../../../../context/data';
 import UsersContext from '../../context';
 
 import { useDimensions, useFetch } from '../../../../hooks';
@@ -17,7 +18,8 @@ export type UserTree = User & { children?: UserTree };
 
 const Visualization: React.FC = () => {
   const { secret } = useContext(AuthContext);
-  const { token } = useContext(UsersContext);
+  const { users } = useContext(DataContext);
+  const { token, setToken, indicatedBy, setIndicatedBy } = useContext(UsersContext);
 
   const [tree, setTree] = useState<UserTree | {}>({});
 
@@ -33,9 +35,19 @@ const Visualization: React.FC = () => {
     } else setTree({});
   }, [token, secret]);
 
+  const seeIndicatedBy = (utoken: string) => {
+    const user = users.find(({ token: userToken }) => utoken === userToken);
+
+    if (user) {
+      setToken(user.token);
+      setIndicatedBy(user.indicatedBy ?? null);
+    }
+  };
+
   return (
     <Container ref={containerRef} >
       <Options />
+      { indicatedBy && <IndicatedTag onClick={() => seeIndicatedBy(indicatedBy)}>Indicado por: { indicatedBy.toUpperCase() }</IndicatedTag> }
         <Tree
           data={tree}
           nodeRadius={15}

@@ -11,3 +11,14 @@ export const Container = styled.div`
   padding: 30px;
   position: relative;
 `;
+
+export const IndicatedTag = styled.div`
+  background-color: #2B7ED7;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  left: 20px;
+  padding: 5px 10px;
+  position: absolute;
+  top: 20px;
+`;

@@ -20,21 +20,30 @@ const Options: React.FC = () => {
 
   const [current, setCurrent] = useState<null | User>(null);
   const [password, setPassword] = useState<string>('');
+  const [indicatedBy, setIndicatedBy] = useState<string>('');
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const [changingPassword, setChangingPassword] = useState<boolean>(false);
   const [changingPasswordError, setChangingPasswordError] = useState<null | string>(null);
 
+  const [changingIndicatedBy, setChangingIndicatedBy] = useState<boolean>(false);
+  const [changingIndicatedByError, setChangingIndicatedByError] = useState<null | string>(null);
+
   useEffect(() => {
     if (token) {
       const user = users.find(({ token: userToken }) => token === userToken) ?? null;
       setCurrent(user);
-    } else setCurrent(null);
+      setIndicatedBy(user?.indicatedBy ? user.indicatedBy : '');
+    } else {
+      setCurrent(null);
+      setIndicatedBy('');
+    }
   }, [users, token]);
 
   const onDismiss = () => {
     setIsOpen(false);
     if (changingPassword) setChangingPassword(false);
+    if (changingIndicatedBy) setChangingIndicatedBy(false);
   };
 
   if (!current) return <></>;
@@ -50,6 +59,16 @@ const Options: React.FC = () => {
       user: { ...current, password }
     }, (response) => {
       setChangingPassword(false);
+    });
+  };
+
+  const updateIndicatedBy = () => {
+    const { secret, token } = current;
+
+    useFetch.post(`/u/${token}/${secret}`, {
+      user: { ...current, indicatedBy: indicatedBy.toLowerCase() }
+    }, (response) => {
+      setChangingIndicatedBy(false);
     });
   };
 
@@ -91,6 +110,22 @@ const Options: React.FC = () => {
                     </Backdrop>
                   )
                 }
+
+                {
+                  changingIndicatedBy && (
+                    <Backdrop>
+                      <Alert visible={Boolean(changingIndicatedByError)} onDismiss={() => setChangingIndicatedByError(null)} timeout={4000}>
+                        { changingIndicatedByError }
+                      </Alert>
+                      <PassModal>
+                        <p style={{ marginTop: 0 }}>Mudar indicação</p>
+                        <TextInput value={indicatedBy} onChange={e => setIndicatedBy(e.target.value)} type="text" />
+                        <Button onClick={updateIndicatedBy}>Salvar</Button>
+                      </PassModal>
+                    </Backdrop>
+                  )
+                }
+
                 <Container layoutId="float-btn">
                   <Close>
                     <X size={25} onClick={onDismiss} style={{ cursor: 'pointer' }} />
@@ -100,6 +135,7 @@ const Options: React.FC = () => {
                     { current.status ? 'Desativar usuário' : 'Reativar usuário' }
                   </MenuItem>
                   <MenuItem onClick={() => setChangingPassword(true)}>Mudar senha</MenuItem>
+                  <MenuItem onClick={() => setChangingIndicatedBy(true)}>Mudar indicação</MenuItem>
                 </Container>
               </Backdrop>
             )

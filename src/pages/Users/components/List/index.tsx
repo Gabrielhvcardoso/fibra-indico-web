@@ -6,17 +6,22 @@ import UsersContext from '../../context';
 
 const Users: React.FC = () => {
   const { users } = useContext(DataContext);
-  const { token, setToken } = useContext(UsersContext);
+  const { token, setToken, setIndicatedBy } = useContext(UsersContext);
+
+  const selectUser = (utoken: string, indicatedBy: string | undefined) => {
+    setToken(utoken);
+    setIndicatedBy(indicatedBy ?? null);
+  };
 
   return (
     <Container>
       {
-        users.map(({ token: userToken, name, status }) => (
+        users.map(({ token: userToken, name, status, indicatedBy }) => (
           <ListItem
             disabled={!status}
             selected={token === userToken}
             key={userToken}
-            onClick={() => setToken(userToken)}
+            onClick={() => selectUser(userToken, indicatedBy)}
           >
             { name }
           </ListItem>
